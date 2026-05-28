@@ -177,14 +177,22 @@ class MusicViewModel(
         if (isPlaying) {
             isPlaying = false
             if (song.isLocal) {
-                mediaPlayer?.pause()
+                try {
+                    mediaPlayer?.pause()
+                } catch (e: Exception) {
+                    Log.e("MusicViewModel", "Error pausing local media player", e)
+                }
             } else {
                 synthPlayer.pause()
             }
         } else {
             isPlaying = true
             if (song.isLocal) {
-                mediaPlayer?.start()
+                try {
+                    mediaPlayer?.start()
+                } catch (e: Exception) {
+                    Log.e("MusicViewModel", "Error starting local media player", e)
+                }
             } else {
                 synthPlayer.resume { progress ->
                     playbackPositionMs = progress
@@ -199,7 +207,11 @@ class MusicViewModel(
     fun stopSong() {
         isPlaying = false
         synthPlayer.stopPlaying()
-        mediaPlayer?.release()
+        try {
+            mediaPlayer?.release()
+        } catch (e: Exception) {
+            Log.e("MusicViewModel", "Error stopping local media player", e)
+        }
         mediaPlayer = null
         playbackPositionMs = 0L
     }
@@ -248,7 +260,11 @@ class MusicViewModel(
         val song = currentSong ?: return
         playbackPositionMs = positionMs
         if (song.isLocal) {
-            mediaPlayer?.seekTo(positionMs.toInt())
+            try {
+                mediaPlayer?.seekTo(positionMs.toInt())
+            } catch (e: Exception) {
+                Log.e("MusicViewModel", "Error seeking local media player", e)
+            }
         } else {
             synthPlayer.seekTo(positionMs)
         }
@@ -330,7 +346,11 @@ class MusicViewModel(
         tickerJob = viewModelScope.launch(Dispatchers.Main) {
             while (true) {
                 if (isPlaying && currentSong?.isLocal == true) {
-                    playbackPositionMs = mediaPlayer?.currentPosition?.toLong() ?: 0L
+                    try {
+                        playbackPositionMs = mediaPlayer?.currentPosition?.toLong() ?: 0L
+                    } catch (e: Exception) {
+                        Log.e("MusicViewModel", "Error getting local media position", e)
+                    }
                 }
                 delay(250)
             }
@@ -340,7 +360,12 @@ class MusicViewModel(
     override fun onCleared() {
         super.onCleared()
         synthPlayer.release()
-        mediaPlayer?.release()
+        try {
+            mediaPlayer?.release()
+        } catch (e: Exception) {
+            Log.e("MusicViewModel", "Error releasing local media player", e)
+        }
+        mediaPlayer = null
         tickerJob?.cancel()
     }
 }
