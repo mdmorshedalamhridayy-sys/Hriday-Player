@@ -1,0 +1,6 @@
+{
+  "name": "Amar Gaan",
+  "description": "A beautiful Bangladeshi style local music player with preloaded offline instrumental loops, custom playlists, and Gemini AI song suggestions and translation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
